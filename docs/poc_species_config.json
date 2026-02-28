@@ -1,0 +1,96 @@
+{
+  "tier1_species": [
+    {
+      "name": "Albacore",
+      "display": "Albacore Tuna",
+      "status": "legal",
+      "code": "ALB"
+    },
+    {
+      "name": "Yellowfin tuna",
+      "display": "Yellowfin Tuna",
+      "status": "legal",
+      "code": "YFT"
+    },
+    {
+      "name": "Shark",
+      "display": "Shark",
+      "status": "bycatch",
+      "code": "SHARK"
+    },
+    {
+      "name": "Pelagic stingray",
+      "display": "Pelagic Stingray",
+      "status": "protected",
+      "code": "PLS"
+    },
+    {
+      "name": "Unknown",
+      "display": "Unknown Species",
+      "status": "unknown",
+      "code": "UNK"
+    }
+  ],
+  "tier2_species": [
+    {
+      "name": "Albacore",
+      "display": "Albacore Tuna",
+      "status": "legal",
+      "code": "ALB"
+    },
+    {
+      "name": "Yellowfin tuna",
+      "display": "Yellowfin Tuna",
+      "status": "legal",
+      "code": "YFT"
+    },
+    {
+      "name": "Bigeye tuna",
+      "display": "Bigeye Tuna",
+      "status": "legal",
+      "code": "BET"
+    },
+    {
+      "name": "Mahi mahi",
+      "display": "Mahi-Mahi",
+      "status": "legal",
+      "code": "DOL"
+    },
+    {
+      "name": "Skipjack tuna",
+      "display": "Skipjack Tuna",
+      "status": "legal",
+      "code": "SKJ"
+    },
+    {
+      "name": "Shark",
+      "display": "Shark",
+      "status": "bycatch",
+      "code": "SHARK"
+    },
+    {
+      "name": "Opah",
+      "display": "Opah (Moonfish)",
+      "status": "bycatch",
+      "code": "LAG"
+    },
+    {
+      "name": "Blue marlin",
+      "display": "Blue Marlin",
+      "status": "bycatch",
+      "code": "BILL"
+    },
+    {
+      "name": "Pelagic stingray",
+      "display": "Pelagic Stingray",
+      "status": "protected",
+      "code": "PLS"
+    },
+    {
+      "name": "Unknown",
+      "display": "Unknown Species",
+      "status": "unknown",
+      "code": "UNK"
+    }
+  ]
+}

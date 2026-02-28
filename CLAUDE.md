@@ -9,6 +9,9 @@ Build something that combines:
 **IMPORTANT: 1, 2, 3, and 4 are MANDATORY.**
 If you deviate from this challenge, think twice before you do.
 
+## OOUR IDEA
+Master Spec Document: `./docs/plans/master-spec.md`
+
 ## Workflow Orchestration
 
 ### 1. Brainstorming by default

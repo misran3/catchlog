@@ -16,3 +16,7 @@ __pycache__/
 
 # Git worktrees
 .worktrees/
+
+
+# MacOS files
+.DS_Store

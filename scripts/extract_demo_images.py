@@ -18,16 +18,16 @@ IMG_WIDTH = 1280
 IMG_HEIGHT = 720
 IMG_AREA = IMG_WIDTH * IMG_HEIGHT
 
-# Species to extract: (dataset_label, slug, count)
+# Species to extract: (dataset_label, slug, count, is_protected)
 TARGET_SPECIES = [
-    ("Albacore", "albacore-tuna", 3),
-    ("Bigeye tuna", "bigeye-tuna", 2),
-    ("Mahi mahi", "mahi-mahi", 2),
-    ("Yellowfin tuna", "yellowfin-tuna", 3),
-    ("Shark", "shark", 3),
-    ("Opah", "opah", 2),
-    ("Pelagic stingray", "pelagic-stingray", 3),
-    ("Unknown", "unknown", 2),
+    ("Albacore", "albacore-tuna", 3, False),
+    ("Bigeye tuna", "bigeye-tuna", 2, False),
+    ("Mahi mahi", "mahi-mahi", 2, False),
+    ("Yellowfin tuna", "yellowfin-tuna", 3, False),
+    ("Shark", "shark", 3, False),
+    ("Opah", "opah", 2, False),
+    ("Pelagic stingray", "pelagic-stingray", 3, True),  # Protected - take largest by bbox
+    ("Unknown", "unknown", 2, False),
 ]
 
 # Minimum bbox area as fraction of image (5%)
@@ -63,28 +63,34 @@ def extract_images():
 
     total_extracted = 0
 
-    for dataset_label, slug, count in TARGET_SPECIES:
+    for dataset_label, slug, count, is_protected in TARGET_SPECIES:
         print(f"\n{dataset_label} -> {slug}")
 
         # Filter to this species
         species_df = fish_df[fish_df["label_l1"] == dataset_label]
         print(f"  Total bboxes: {len(species_df)}")
 
-        # Filter to prominent bboxes (>5% of image)
-        prominent_df = species_df[species_df["bbox_area_pct"] > MIN_BBOX_AREA_FRACTION]
-        print(f"  Prominent bboxes (>5%): {len(prominent_df)}")
+        if is_protected:
+            # For protected species: take largest by bbox area (no threshold)
+            sorted_df = species_df.nlargest(count, "bbox_area")
+            sampled_ids = sorted_df["img_id"].tolist()
+            print(f"  Taking {len(sampled_ids)} largest by bbox area (protected species)")
+        else:
+            # For other species: filter to prominent bboxes (>5% of image)
+            prominent_df = species_df[species_df["bbox_area_pct"] > MIN_BBOX_AREA_FRACTION]
+            print(f"  Prominent bboxes (>5%): {len(prominent_df)}")
 
-        # Get unique images
-        unique_images = prominent_df["img_id"].unique()
-        print(f"  Unique images: {len(unique_images)}")
+            # Get unique images
+            unique_images = prominent_df["img_id"].unique()
+            print(f"  Unique images: {len(unique_images)}")
 
-        # Sample images
-        sample_count = min(count, len(unique_images))
-        if sample_count == 0:
-            print(f"  WARNING: No suitable images found!")
-            continue
+            # Sample images
+            sample_count = min(count, len(unique_images))
+            if sample_count == 0:
+                print(f"  WARNING: No suitable images found!")
+                continue
 
-        sampled_ids = random.sample(list(unique_images), sample_count)
+            sampled_ids = random.sample(list(unique_images), sample_count)
 
         # Copy images
         for i, img_id in enumerate(sampled_ids, 1):

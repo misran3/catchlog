@@ -10,8 +10,10 @@ const SPECIES_STATUS: Record<string, "legal" | "bycatch" | "protected" | "unknow
   "Albacore Tuna": "legal",
   "Bigeye Tuna": "legal",
   "Mahi-Mahi": "legal",
-  "Blue Shark": "bycatch",
-  "Sea Turtle": "protected",
+  "Yellowfin Tuna": "legal",
+  "Shark": "bycatch",
+  "Opah": "bycatch",
+  "Pelagic Stingray": "protected",
   "Unknown": "unknown",
 };
 

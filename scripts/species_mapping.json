@@ -1,0 +1,74 @@
+{
+  "Albacore": {
+    "status": "legal",
+    "backend_name": "Albacore Tuna"
+  },
+  "Bigeye tuna": {
+    "status": "legal",
+    "backend_name": "Bigeye Tuna"
+  },
+  "Yellowfin tuna": {
+    "status": "legal",
+    "backend_name": "Yellowfin Tuna"
+  },
+  "Mahi mahi": {
+    "status": "legal",
+    "backend_name": "Mahi-Mahi"
+  },
+  "Shark": {
+    "status": "bycatch",
+    "backend_name": "Blue Shark"
+  },
+  "Skipjack tuna": {
+    "status": "legal",
+    "backend_name": "Skipjack Tuna"
+  },
+  "Wahoo": {
+    "status": "legal",
+    "backend_name": "Wahoo"
+  },
+  "Opah": {
+    "status": "bycatch",
+    "backend_name": "Opah"
+  },
+  "Oilfish": {
+    "status": "bycatch",
+    "backend_name": "Oilfish"
+  },
+  "Unknown": {
+    "status": "unknown",
+    "backend_name": "Unknown"
+  },
+  "Black marlin": {
+    "status": "bycatch",
+    "backend_name": "Black Marlin"
+  },
+  "Blue marlin": {
+    "status": "bycatch",
+    "backend_name": "Blue Marlin"
+  },
+  "Striped marlin": {
+    "status": "bycatch",
+    "backend_name": "Striped Marlin"
+  },
+  "Swordfish": {
+    "status": "legal",
+    "backend_name": "Swordfish"
+  },
+  "Indo Pacific sailfish": {
+    "status": "bycatch",
+    "backend_name": "Sailfish"
+  },
+  "Shortbill spearfish": {
+    "status": "bycatch",
+    "backend_name": "Spearfish"
+  },
+  "Pelagic stingray": {
+    "status": "protected",
+    "backend_name": "Pelagic Stingray"
+  },
+  "Mola mola": {
+    "status": "protected",
+    "backend_name": "Ocean Sunfish"
+  }
+}

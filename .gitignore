@@ -6,3 +6,17 @@ hackathon-guidelines.md
 
 # Data
 data/
+
+# Python
+__pycache__/
+*.pyc
+
+# Backend SQLite Databses
+*.db
+
+# Git worktrees
+.worktrees/
+
+
+# MacOS files
+.DS_Store

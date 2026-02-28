@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Extract demo images from FOID dataset for UI testing."""
 
+import json
 import random
 import shutil
 from pathlib import Path
@@ -62,6 +63,7 @@ def extract_images():
         f.unlink()
 
     total_extracted = 0
+    bbox_data = {}  # Store bbox coordinates for each image
 
     for dataset_label, slug, count, is_protected in TARGET_SPECIES:
         print(f"\n{dataset_label} -> {slug}")
@@ -73,8 +75,8 @@ def extract_images():
         if is_protected:
             # For protected species: take largest by bbox area (no threshold)
             sorted_df = species_df.nlargest(count, "bbox_area")
-            sampled_ids = sorted_df["img_id"].tolist()
-            print(f"  Taking {len(sampled_ids)} largest by bbox area (protected species)")
+            sampled_rows = sorted_df.to_dict("records")
+            print(f"  Taking {len(sampled_rows)} largest by bbox area (protected species)")
         else:
             # For other species: filter to prominent bboxes (>5% of image)
             prominent_df = species_df[species_df["bbox_area_pct"] > MIN_BBOX_AREA_FRACTION]
@@ -91,18 +93,39 @@ def extract_images():
                 continue
 
             sampled_ids = random.sample(list(unique_images), sample_count)
+            # Get the row data for sampled images (take first bbox per image)
+            sampled_rows = []
+            for img_id in sampled_ids:
+                row = prominent_df[prominent_df["img_id"] == img_id].iloc[0].to_dict()
+                sampled_rows.append(row)
 
-        # Copy images
-        for i, img_id in enumerate(sampled_ids, 1):
+        # Copy images and save bbox data
+        for i, row in enumerate(sampled_rows, 1):
+            img_id = row["img_id"]
             src = IMAGES_DIR / f"{img_id}.jpg"
-            dst = OUTPUT_DIR / f"{slug}_{i:03d}.jpg"
+            filename = f"{slug}_{i:03d}.jpg"
+            dst = OUTPUT_DIR / filename
 
             if src.exists():
                 shutil.copy(src, dst)
-                print(f"  Copied: {dst.name}")
+                # Convert FOID bbox format [x_min, x_max, y_min, y_max] to [x1, y1, x2, y2]
+                bbox = [
+                    int(row["x_min"]),
+                    int(row["y_min"]),
+                    int(row["x_max"]),
+                    int(row["y_max"]),
+                ]
+                bbox_data[filename] = {"bbox": bbox}
+                print(f"  Copied: {filename} (bbox: {bbox})")
                 total_extracted += 1
             else:
                 print(f"  WARNING: Source not found: {src}")
+
+    # Save bbox data to JSON
+    bbox_file = OUTPUT_DIR / "demo_bboxes.json"
+    with open(bbox_file, "w") as f:
+        json.dump(bbox_data, f, indent=2)
+    print(f"\nSaved bbox data to: {bbox_file}")
 
     print(f"\n{'=' * 40}")
     print(f"Total images extracted: {total_extracted}")

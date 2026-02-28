@@ -39,6 +39,24 @@ FILENAME_TO_SPECIES = {
     "unknown": "Unknown",
 }
 
+# Cached bbox data for demo images
+_demo_bboxes: dict | None = None
+
+
+def _load_demo_bboxes() -> dict:
+    """Load bbox data from demo_bboxes.json (cached)."""
+    global _demo_bboxes
+    if _demo_bboxes is None:
+        import json
+        from pathlib import Path
+        bbox_file = Path(__file__).parent / "demo_images" / "demo_bboxes.json"
+        if bbox_file.exists():
+            with open(bbox_file) as f:
+                _demo_bboxes = json.load(f)
+        else:
+            _demo_bboxes = {}
+    return _demo_bboxes
+
 # Test-only: force specific species for deterministic testing
 _forced_species: str | None = None
 
@@ -112,18 +130,26 @@ def run_inference(image: Image.Image, filename: str | None = None) -> InferenceR
     if _forced_species:
         species = _forced_species
         _forced_species = None
+        bbox = _random_bbox(width, height)
     # Priority 2: Mock inference from filename (MOCK_INFERENCE=true)
     elif os.getenv("MOCK_INFERENCE") == "true" and filename:
         parsed = parse_species_from_filename(filename)
         species = parsed if parsed else _weighted_random_species()
+        # Try to load real bbox from demo data
+        demo_bboxes = _load_demo_bboxes()
+        if filename in demo_bboxes:
+            bbox = demo_bboxes[filename]["bbox"]
+        else:
+            bbox = _random_bbox(width, height)
     # Priority 3: Random mock (default)
     else:
         species = _weighted_random_species()
+        bbox = _random_bbox(width, height)
 
     return InferenceResult(
         species=species,
         confidence=round(random.uniform(0.75, 0.98), 2),
-        bbox=_random_bbox(width, height),
+        bbox=bbox,
     )
 
 

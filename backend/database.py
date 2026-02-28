@@ -9,12 +9,14 @@ DB_PATH = Path(__file__).parent / "catch_log.db"
 # Species seed data: (id, name, status)
 # Status: 0=legal, 1=bycatch, 2=protected, 3=unknown
 SPECIES_DATA = [
-    (1, "Albacore Tuna", 0),
-    (2, "Bigeye Tuna", 0),
-    (3, "Mahi-Mahi", 0),
-    (4, "Blue Shark", 1),
-    (5, "Sea Turtle", 2),
-    (6, "Unknown", 3),
+    (1, "Albacore Tuna", 0),      # legal
+    (2, "Bigeye Tuna", 0),        # legal
+    (3, "Mahi-Mahi", 0),          # legal
+    (4, "Yellowfin Tuna", 0),     # legal (new)
+    (5, "Shark", 1),              # bycatch (was Blue Shark)
+    (6, "Opah", 1),               # bycatch (new)
+    (7, "Pelagic Stingray", 2),   # protected (was Sea Turtle)
+    (8, "Unknown", 3),            # unknown
 ]
 
 

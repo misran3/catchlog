@@ -27,6 +27,18 @@ SPECIES_WEIGHTS = [
     ("Unknown", 2),           # Unknown - very rare
 ]
 
+# Filename to species mapping for MOCK_INFERENCE mode
+FILENAME_TO_SPECIES = {
+    "albacore-tuna": "Albacore Tuna",
+    "bigeye-tuna": "Bigeye Tuna",
+    "mahi-mahi": "Mahi-Mahi",
+    "yellowfin-tuna": "Yellowfin Tuna",
+    "shark": "Shark",
+    "opah": "Opah",
+    "pelagic-stingray": "Pelagic Stingray",
+    "unknown": "Unknown",
+}
+
 # Test-only: force specific species for deterministic testing
 _forced_species: str | None = None
 
@@ -35,6 +47,23 @@ def set_next_species(species: str | None) -> None:
     """Force next inference to return specific species. For testing only."""
     global _forced_species
     _forced_species = species
+
+
+def parse_species_from_filename(filename: str | None) -> str | None:
+    """Extract species from filename like 'shark_001.jpg' -> 'Shark'.
+
+    For MOCK_INFERENCE mode only.
+    """
+    if not filename:
+        return None
+
+    import re
+    from pathlib import Path
+
+    stem = Path(filename).stem  # 'shark_001'
+    # Remove trailing _NNN
+    slug = re.sub(r"_\d+$", "", stem)  # 'shark'
+    return FILENAME_TO_SPECIES.get(slug)
 
 
 def _weighted_random_species() -> str:
@@ -59,7 +88,7 @@ def _random_bbox(width: int, height: int) -> list[int]:
     return [x1, y1, x2, y2]
 
 
-def run_inference(image: Image.Image) -> InferenceResult:
+def run_inference(image: Image.Image, filename: str | None = None) -> InferenceResult:
     """
     Run mock inference on an image.
 
@@ -68,16 +97,26 @@ def run_inference(image: Image.Image) -> InferenceResult:
     2. Run model forward pass
     3. Parse detection output
 
-    For now, returns random realistic results.
+    For now, returns mock results based on:
+    1. Forced species (set_next_species) - for tests
+    2. Filename parsing (MOCK_INFERENCE=true) - for demos
+    3. Weighted random - default
     """
+    import os
+
     global _forced_species
 
     width, height = image.size
 
-    # Use forced species if set (for testing), otherwise random
+    # Priority 1: Test override (set_next_species)
     if _forced_species:
         species = _forced_species
-        _forced_species = None  # Reset after use
+        _forced_species = None
+    # Priority 2: Mock inference from filename (MOCK_INFERENCE=true)
+    elif os.getenv("MOCK_INFERENCE") == "true" and filename:
+        parsed = parse_species_from_filename(filename)
+        species = parsed if parsed else _weighted_random_species()
+    # Priority 3: Random mock (default)
     else:
         species = _weighted_random_species()
 

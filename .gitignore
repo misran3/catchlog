@@ -6,3 +6,7 @@ hackathon-guidelines.md
 
 # Data
 data/
+
+# Python
+__pycache__/
+*.pyc

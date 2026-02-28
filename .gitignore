@@ -6,6 +6,7 @@ hackathon-guidelines.md
 
 # Data
 data/
+.venv
 
 # Python
 __pycache__/

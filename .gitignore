@@ -13,3 +13,6 @@ __pycache__/
 
 # Backend SQLite Databses
 *.db
+
+# Git worktrees
+.worktrees/

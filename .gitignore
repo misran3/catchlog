@@ -6,6 +6,8 @@ hackathon-guidelines.md
 
 # Data
 data/
+
+# Venv
 .venv
 
 # Python
@@ -25,4 +27,9 @@ __pycache__/
 # Claude local settings
 .claude/settings.local.json
 
-output
+# Outputs
+/output
+
+# Python
+__pycache__/
+*.pyc

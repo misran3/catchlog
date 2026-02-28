@@ -67,7 +67,7 @@ async def upload_image(file: UploadFile) -> Detection:
         raise HTTPException(status_code=400, detail=f"Invalid image: {e}")
 
     # Run detection pipeline
-    detection = process_image(image)
+    detection = process_image(image, filename=file.filename)
 
     return detection
 

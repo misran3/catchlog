@@ -54,7 +54,7 @@ class AgentState:
 _state = AgentState()
 
 
-def process_image(image: Image.Image) -> Detection:
+def process_image(image: Image.Image, filename: str | None = None) -> Detection:
     """
     Process an uploaded image through the full pipeline.
 
@@ -65,7 +65,7 @@ def process_image(image: Image.Image) -> Detection:
     5. Update in-memory state
     """
     # Run inference
-    result: InferenceResult = run_inference(image)
+    result: InferenceResult = run_inference(image, filename=filename)
 
     # Get species info from DB
     species_info = get_species_by_name(result.species)

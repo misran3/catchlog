@@ -142,10 +142,10 @@ def get_compliance_stats() -> dict:
         cursor = conn.execute("""
             SELECT
                 COUNT(*) as total,
-                SUM(CASE WHEN s.status = 0 THEN 1 ELSE 0 END) as legal,
-                SUM(CASE WHEN s.status = 1 THEN 1 ELSE 0 END) as bycatch,
-                SUM(CASE WHEN s.status = 2 THEN 1 ELSE 0 END) as protected,
-                SUM(CASE WHEN d.released = 1 THEN 1 ELSE 0 END) as released
+                COALESCE(SUM(CASE WHEN s.status = 0 THEN 1 ELSE 0 END), 0) as legal,
+                COALESCE(SUM(CASE WHEN s.status = 1 THEN 1 ELSE 0 END), 0) as bycatch,
+                COALESCE(SUM(CASE WHEN s.status = 2 THEN 1 ELSE 0 END), 0) as protected,
+                COALESCE(SUM(CASE WHEN d.released = 1 THEN 1 ELSE 0 END), 0) as released
             FROM detections d
             JOIN species s ON d.species_id = s.id
         """)

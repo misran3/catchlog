@@ -17,13 +17,24 @@ class InferenceResult:
 # Weighted species distribution for realistic demo
 # Format: (species_name, weight)
 SPECIES_WEIGHTS = [
-    ("Albacore Tuna", 30),  # Legal - common
-    ("Bigeye Tuna", 25),    # Legal - common
-    ("Mahi-Mahi", 15),      # Legal - less common
-    ("Blue Shark", 20),     # Bycatch
-    ("Sea Turtle", 8),      # Protected - rare
-    ("Unknown", 2),         # Unknown - very rare
+    ("Albacore Tuna", 35),    # Legal - most common
+    ("Yellowfin Tuna", 20),   # Legal - common
+    ("Bigeye Tuna", 10),      # Legal
+    ("Mahi-Mahi", 5),         # Legal
+    ("Shark", 15),            # Bycatch
+    ("Opah", 8),              # Bycatch
+    ("Pelagic Stingray", 5),  # Protected - rare
+    ("Unknown", 2),           # Unknown - very rare
 ]
+
+# Test-only: force specific species for deterministic testing
+_forced_species: str | None = None
+
+
+def set_next_species(species: str | None) -> None:
+    """Force next inference to return specific species. For testing only."""
+    global _forced_species
+    _forced_species = species
 
 
 def _weighted_random_species() -> str:
@@ -59,10 +70,19 @@ def run_inference(image: Image.Image) -> InferenceResult:
 
     For now, returns random realistic results.
     """
+    global _forced_species
+
     width, height = image.size
 
+    # Use forced species if set (for testing), otherwise random
+    if _forced_species:
+        species = _forced_species
+        _forced_species = None  # Reset after use
+    else:
+        species = _weighted_random_species()
+
     return InferenceResult(
-        species=_weighted_random_species(),
+        species=species,
         confidence=round(random.uniform(0.75, 0.98), 2),
         bbox=_random_bbox(width, height),
     )

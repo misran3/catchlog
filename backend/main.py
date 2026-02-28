@@ -1,6 +1,9 @@
 # backend/main.py
 """FastAPI application for CatchLog."""
 
+from dotenv import load_dotenv
+load_dotenv()  # Load .env file
+
 from contextlib import asynccontextmanager
 from pathlib import Path
 import io

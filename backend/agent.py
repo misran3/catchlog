@@ -193,6 +193,15 @@ def release_last() -> dict | None:
     mark_released(unreleased["id"])
     stats = get_compliance_stats()
 
+    # Add release alert to feed
+    timestamp = datetime.now(tz=timezone.utc).isoformat()
+    _state.alerts.append(Alert(
+        timestamp=timestamp,
+        message=f"RELEASED: {unreleased['name']} returned to water",
+        level=AlertLevel.INFO,
+    ))
+    _state.alerts = _state.alerts[-50:]
+
     return {
         "released_id": unreleased["id"],
         "species": unreleased["name"],

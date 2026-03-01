@@ -27,7 +27,7 @@ SPECIES_DATA = [
     (14, "Snake Mackerel", 0),
     (15, "Roudie Scolar", 0),
     # Bycatch (status=1)
-    (16, "Shark", 1),
+    (16, "Shark", 2),  # DEMO: Changed to protected for demo purposes
     (17, "Thresher Shark", 1),
     (18, "Opah", 1),
     (19, "Oilfish", 1),

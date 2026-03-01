@@ -30,7 +30,7 @@ SPECIES_MAP = {
     "SNM": {"name": "Snake Mackerel", "status": "legal"},
     "RSC": {"name": "Roudie Scolar", "status": "legal"},
     # Bycatch (5 species)
-    "SHK": {"name": "Shark", "status": "bycatch"},
+    "SHK": {"name": "Shark", "status": "protected"},  # DEMO: Changed for demo
     "THR": {"name": "Thresher Shark", "status": "bycatch"},
     "OPA": {"name": "Opah", "status": "bycatch"},
     "OIL": {"name": "Oilfish", "status": "bycatch"},

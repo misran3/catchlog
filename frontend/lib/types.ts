@@ -39,3 +39,33 @@ export interface ReleaseResponse {
   species: string;
   compliance_status: string;
 }
+
+// Compliance Report types
+
+export interface TripSummary {
+  total_catches: number;
+  legal: number;
+  bycatch: number;
+  protected: number;
+  released: number;
+  unreleased_violations: number;
+}
+
+export interface Violation {
+  species: string;
+  status: string;
+  count: number;
+  fine_per_incident: number;
+  total_fine: number;
+  explanation: string;
+}
+
+export interface ComplianceReport {
+  trip_summary: TripSummary;
+  violations: Violation[];
+  regional_context: string;
+  potential_penalties: string;
+  recommendation: string;
+  severity: "compliant" | "minor" | "major" | "critical";
+  email_sent: boolean;
+}

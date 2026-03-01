@@ -13,10 +13,11 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from PIL import Image
 
-from database import init_db
+from database import init_db, get_audit_log, format_audit_log_for_agent
 from inference import load_model
 from agent import process_image, get_state, release_last
-from models import Detection, AppState, ReleaseResponse
+from compliance_agent import run_compliance_review
+from models import Detection, AppState, ReleaseResponse, ComplianceReport, TripSummary
 
 
 @asynccontextmanager
@@ -101,6 +102,47 @@ async def release_catch() -> ReleaseResponse:
         )
 
     return ReleaseResponse(**result)
+
+
+@app.post("/api/sync", response_model=ComplianceReport)
+async def sync_to_cloud() -> ComplianceReport:
+    """
+    Sync audit log to cloud for compliance review.
+
+    Triggers LLM agent to:
+    1. Review catches against regulations
+    2. Generate compliance report
+    3. Send email alert if violations exist
+    """
+    # Get audit log from database
+    detections = get_audit_log()
+
+    if not detections:
+        # Return empty compliant report if no catches
+        return ComplianceReport(
+            trip_summary=TripSummary(
+                total_catches=0,
+                legal=0,
+                bycatch=0,
+                protected=0,
+                released=0,
+                unreleased_violations=0,
+            ),
+            violations=[],
+            regional_context="No catches to review.",
+            potential_penalties="None.",
+            recommendation="No action required.",
+            severity="compliant",
+            email_sent=False,
+        )
+
+    # Format for agent
+    audit_log_str = format_audit_log_for_agent(detections)
+
+    # Run compliance review
+    report = await run_compliance_review(audit_log_str)
+
+    return report
 
 
 @app.get("/health")

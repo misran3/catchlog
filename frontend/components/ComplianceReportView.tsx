@@ -40,7 +40,7 @@ export function ComplianceReportView({ report, onClose }: ComplianceReportViewPr
             <div className="grid grid-cols-3 gap-2 text-sm">
               <div className="bg-gray-50 p-2 rounded">
                 <div className="text-gray-500">Total</div>
-                <div className="font-medium">{report.trip_summary.total_catches}</div>
+                <div className="font-medium text-gray-800">{report.trip_summary.total_catches}</div>
               </div>
               <div className="bg-green-50 p-2 rounded">
                 <div className="text-gray-500">Legal</div>
@@ -109,7 +109,7 @@ export function ComplianceReportView({ report, onClose }: ComplianceReportViewPr
         <div className="p-4 border-t bg-gray-50">
           <button
             onClick={onClose}
-            className="w-full py-2 bg-gray-200 hover:bg-gray-300 rounded font-medium"
+            className="w-full py-2 bg-red-500 hover:bg-red-600 text-white rounded font-medium"
           >
             Close
           </button>

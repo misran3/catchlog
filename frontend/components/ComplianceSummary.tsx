@@ -16,7 +16,7 @@ export function ComplianceSummary({ compliance }: ComplianceSummaryProps) {
       <div className="space-y-2 text-sm">
         <div className="flex justify-between">
           <span className="text-gray-600">Total Catch</span>
-          <span className="font-medium">{compliance.total}</span>
+          <span className="font-medium text-gray-800">{compliance.total}</span>
         </div>
         <div className="flex justify-between">
           <span className="text-gray-600">Legal</span>
@@ -32,7 +32,7 @@ export function ComplianceSummary({ compliance }: ComplianceSummaryProps) {
         </div>
         <div className="flex justify-between">
           <span className="text-gray-600">Released</span>
-          <span className="font-medium">{compliance.released}</span>
+          <span className="font-medium text-blue-600">{compliance.released}</span>
         </div>
 
         <div className="border-t pt-2 mt-2">

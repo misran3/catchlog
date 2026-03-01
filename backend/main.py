@@ -14,7 +14,7 @@ from fastapi.staticfiles import StaticFiles
 from PIL import Image
 
 from database import init_db, get_audit_log, format_audit_log_for_agent
-from inference import load_model
+from inference import load_model, warmup_model
 from agent import process_image, get_state, release_last
 from compliance_agent import run_compliance_review
 from models import Detection, AppState, ReleaseResponse, ComplianceReport, TripSummary
@@ -23,8 +23,15 @@ from models import Detection, AppState, ReleaseResponse, ComplianceReport, TripS
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Initialize database and model on startup."""
+    print("=" * 50)
+    print("Starting CatchLog Backend")
+    print("=" * 50)
     init_db()
     load_model()
+    warmup_model()
+    print("=" * 50)
+    print("Server ready!")
+    print("=" * 50)
     yield
 
 

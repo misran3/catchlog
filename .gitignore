@@ -29,7 +29,3 @@ __pycache__/
 
 # Outputs
 /output
-
-# Python
-__pycache__/
-*.pyc

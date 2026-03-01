@@ -10,6 +10,9 @@ import { CatchCounter } from "@/components/CatchCounter";
 import { AlertFeed } from "@/components/AlertFeed";
 import { ComplianceSummary } from "@/components/ComplianceSummary";
 import { ReleaseButton } from "@/components/ReleaseButton";
+import { SyncButton } from "@/components/SyncButton";
+import { ComplianceReportView } from "@/components/ComplianceReportView";
+import { ComplianceReport } from "@/lib/types";
 
 const INITIAL_STATE: AppState = {
   last_detection: null,
@@ -28,6 +31,7 @@ const INITIAL_STATE: AppState = {
 
 export default function Dashboard() {
   const [state, setState] = useState<AppState>(INITIAL_STATE);
+  const [complianceReport, setComplianceReport] = useState<ComplianceReport | null>(null);
   const audioRef = useRef<HTMLAudioElement>(null);
 
   // Refresh state from backend
@@ -95,6 +99,7 @@ export default function Dashboard() {
         <div className="space-y-4">
           <CatchCounter counts={state.counts} />
           <ComplianceSummary compliance={state.compliance} />
+          <SyncButton onReport={setComplianceReport} />
         </div>
       </div>
 
@@ -105,6 +110,14 @@ export default function Dashboard() {
 
       {/* Hidden audio element for alerts */}
       <audio ref={audioRef} className="hidden" />
+
+      {/* Compliance Report Modal */}
+      {complianceReport && (
+        <ComplianceReportView
+          report={complianceReport}
+          onClose={() => setComplianceReport(null)}
+        />
+      )}
     </div>
   );
 }

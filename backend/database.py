@@ -8,15 +8,38 @@ DB_PATH = Path(__file__).parent / "catch_log.db"
 
 # Species seed data: (id, name, status)
 # Status: 0=legal, 1=bycatch, 2=protected, 3=unknown
+# Matches train_full.py TARGET_SPECIES exactly
 SPECIES_DATA = [
-    (1, "Albacore Tuna", 0),      # legal
-    (2, "Bigeye Tuna", 0),        # legal
-    (3, "Mahi-Mahi", 0),          # legal
-    (4, "Yellowfin Tuna", 0),     # legal (new)
-    (5, "Shark", 1),              # bycatch (was Blue Shark)
-    (6, "Opah", 1),               # bycatch (new)
-    (7, "Pelagic Stingray", 2),   # protected (was Sea Turtle)
-    (8, "Unknown", 3),            # unknown
+    # Legal (status=0)
+    (1, "Albacore Tuna", 0),
+    (2, "Yellowfin Tuna", 0),
+    (3, "Bigeye Tuna", 0),
+    (4, "Skipjack Tuna", 0),
+    (5, "Mahi-Mahi", 0),
+    (6, "Swordfish", 0),
+    (7, "Wahoo", 0),
+    (8, "Shortbill Spearfish", 0),
+    (9, "Long Snouted Lancetfish", 0),
+    (10, "Great Barracuda", 0),
+    (11, "Sickle Pomfret", 0),
+    (12, "Pomfret", 0),
+    (13, "Rainbow Runner", 0),
+    (14, "Snake Mackerel", 0),
+    (15, "Roudie Scolar", 0),
+    # Bycatch (status=1)
+    (16, "Shark", 2),  # DEMO: Changed to protected for demo purposes
+    (17, "Thresher Shark", 1),
+    (18, "Opah", 1),
+    (19, "Oilfish", 1),
+    (20, "Mola Mola", 1),
+    # Protected (status=2)
+    (21, "Pelagic Stingray", 2),
+    (22, "Striped Marlin", 2),
+    (23, "Blue Marlin", 2),
+    (24, "Black Marlin", 2),
+    (25, "Indo Pacific Sailfish", 2),
+    # Unknown (status=3)
+    (26, "Unknown", 3),
 ]
 
 

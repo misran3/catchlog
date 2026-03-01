@@ -1,11 +1,41 @@
+# Backend Integration Checklist
+
+**After training completes, follow these steps to integrate the model.**
+
+---
+
+## Step 1: Download Model (~2 min)
+
+```bash
+# From local machine
+scp hackathon@<VM_IP>:/home/hackathon/catchlog/output/catchlog-lora-adapter.zip ~/Downloads/
+
+# Extract to backend
+cd /path/to/catchlog/backend
+mkdir -p models
+unzip ~/Downloads/catchlog-lora-adapter.zip -d models/
+```
+
+Verify:
+```bash
+ls models/catchlog-lora-adapter/
+# Should see: adapter_config.json, adapter_model.safetensors
+```
+
+---
+
+## Step 2: Update inference.py (~15 min)
+
+Replace `backend/inference.py` with this implementation:
+
+```python
 # backend/inference.py
-"""PaliGemma inference with LoRA adapter for fish species detection."""
+"""Real PaliGemma inference with LoRA adapter."""
 
 import os
 import re
-import random
+import torch
 from dataclasses import dataclass
-from pathlib import Path
 from PIL import Image
 
 # ============================================================
@@ -30,7 +60,7 @@ SPECIES_MAP = {
     "SNM": {"name": "Snake Mackerel", "status": "legal"},
     "RSC": {"name": "Roudie Scolar", "status": "legal"},
     # Bycatch (5 species)
-    "SHK": {"name": "Shark", "status": "protected"},  # DEMO: Changed for demo
+    "SHK": {"name": "Shark", "status": "bycatch"},
     "THR": {"name": "Thresher Shark", "status": "bycatch"},
     "OPA": {"name": "Opah", "status": "bycatch"},
     "OIL": {"name": "Oilfish", "status": "bycatch"},
@@ -53,27 +83,6 @@ STATUS_PRIORITY = {
     "legal": 4,
     "ignore": 5,
 }
-
-# Filename mappings for mock mode
-FILENAME_TO_SPECIES = {
-    "albacore": "Albacore Tuna",
-    "albacore-tuna": "Albacore Tuna",
-    "yellowfin": "Yellowfin Tuna",
-    "yellowfin-tuna": "Yellowfin Tuna",
-    "bigeye": "Bigeye Tuna",
-    "bigeye-tuna": "Bigeye Tuna",
-    "mahi": "Mahi-Mahi",
-    "mahi-mahi": "Mahi-Mahi",
-    "shark": "Shark",
-    "opah": "Opah",
-    "stingray": "Pelagic Stingray",
-    "pelagic-stingray": "Pelagic Stingray",
-    "protected": "Pelagic Stingray",
-    "marlin": "Blue Marlin",
-    "blue-marlin": "Blue Marlin",
-    "unknown": "Unknown",
-}
-
 
 # ============================================================
 # DATA CLASSES
@@ -106,7 +115,6 @@ def parse_detections(output_text: str, img_width: int, img_height: int) -> list[
             continue
 
         # Convert normalized (0-1023) to pixel coordinates
-        # Note: PaliGemma order is [y1, x1, y2, x2]
         x1 = int(int(x1_norm) / 1023 * img_width)
         y1 = int(int(y1_norm) / 1023 * img_height)
         x2 = int(int(x2_norm) / 1023 * img_width)
@@ -133,19 +141,19 @@ def select_primary_detection(detections: list[dict]) -> dict | None:
 
 
 # ============================================================
-# MODEL STATE
+# MODEL LOADING
 # ============================================================
 
 _model = None
 _processor = None
-_device = None
-ADAPTER_PATH = Path(__file__).parent / "models" / "catchlog-lora-adapter"
+DEVICE = "mps" if torch.backends.mps.is_available() else "cpu"
+ADAPTER_PATH = "models/catchlog-lora-adapter"
 BASE_MODEL_ID = "google/paligemma2-3b-pt-224"
 
 
-def load_model(adapter_path: str | None = None) -> None:
+def load_model(adapter_path: str = ADAPTER_PATH) -> None:
     """Load PaliGemma + LoRA adapter."""
-    global _model, _processor, _device
+    global _model, _processor
 
     # Check for mock mode
     if os.getenv("MOCK_INFERENCE") == "true":
@@ -153,50 +161,34 @@ def load_model(adapter_path: str | None = None) -> None:
         _model = "mock"
         return
 
-    import torch
     from transformers import PaliGemmaProcessor, PaliGemmaForConditionalGeneration
     from peft import PeftModel
-
-    adapter_path = adapter_path or str(ADAPTER_PATH)
-
-    # Determine device
-    if torch.backends.mps.is_available():
-        _device = "mps"
-    elif torch.cuda.is_available():
-        _device = "cuda"
-    else:
-        _device = "cpu"
 
     print(f"Loading processor from {BASE_MODEL_ID}...")
     _processor = PaliGemmaProcessor.from_pretrained(BASE_MODEL_ID)
 
-    print(f"Loading base model to {_device}...")
-    dtype = torch.float16 if _device != "cpu" else torch.float32
+    print(f"Loading base model to {DEVICE}...")
     _model = PaliGemmaForConditionalGeneration.from_pretrained(
         BASE_MODEL_ID,
-        torch_dtype=dtype,
-        device_map=_device,
+        torch_dtype=torch.float16,
+        device_map=DEVICE,
     )
 
     print(f"Loading LoRA adapter from {adapter_path}...")
     _model = PeftModel.from_pretrained(_model, adapter_path)
     _model.eval()
 
-    print(f"Model loaded on {_device}!")
+    print("Model loaded!")
 
 
 def is_model_loaded() -> bool:
-    """Check if model is loaded."""
     return _model is not None
 
 
 def warmup_model() -> None:
-    """Run dummy inference to JIT compile (for MPS)."""
+    """Run dummy inference to JIT compile."""
     if _model == "mock":
         return
-    if _model is None:
-        return
-
     print("Warming up model...")
     dummy = Image.new("RGB", (224, 224), color="blue")
     _run_raw_inference(dummy)
@@ -205,14 +197,11 @@ def warmup_model() -> None:
 
 def _run_raw_inference(image: Image.Image) -> str:
     """Run inference, return raw model output."""
-    import torch
-
-    dtype = torch.float16 if _device != "cpu" else torch.float32
     inputs = _processor(
         text="<image>detect fish",
         images=image.convert("RGB"),
         return_tensors="pt"
-    ).to(_device, dtype=dtype)
+    ).to(DEVICE, dtype=torch.float16)
 
     with torch.no_grad():
         output = _model.generate(**inputs, max_new_tokens=256)
@@ -221,96 +210,53 @@ def _run_raw_inference(image: Image.Image) -> str:
 
 
 # ============================================================
-# MOCK INFERENCE
+# MOCK INFERENCE (for testing without model)
 # ============================================================
 
-_forced_species: str | None = None
+import random
 
-
-def set_next_species(species: str | None) -> None:
-    """Force next inference to return specific species. For testing only."""
-    global _forced_species
-    _forced_species = species
-
-
-def _weighted_random_species() -> tuple[str, str]:
-    """Pick a species based on weighted distribution."""
-    choices = [
-        ("Albacore Tuna", "legal", 35),
-        ("Yellowfin Tuna", "legal", 20),
-        ("Bigeye Tuna", "legal", 10),
-        ("Mahi-Mahi", "legal", 5),
-        ("Shark", "bycatch", 15),
-        ("Opah", "bycatch", 8),
-        ("Pelagic Stingray", "protected", 5),
-        ("Unknown", "unknown", 2),
-    ]
-    species_status = [(s, st) for s, st, _ in choices]
-    weights = [w for _, _, w in choices]
-    return random.choices(species_status, weights=weights, k=1)[0]
-
-
-def _random_bbox(width: int, height: int) -> list[int]:
-    """Generate a random bounding box within image bounds."""
-    box_w = random.randint(int(width * 0.2), int(width * 0.4))
-    box_h = random.randint(int(height * 0.2), int(height * 0.4))
-    x1 = random.randint(0, max(1, width - box_w))
-    y1 = random.randint(0, max(1, height - box_h))
-    return [x1, y1, x1 + box_w, y1 + box_h]
-
-
-def _parse_species_from_filename(filename: str | None) -> str | None:
-    """Extract species from filename for mock mode."""
-    if not filename:
-        return None
-
-    stem = Path(filename).stem.lower()
-    # Remove trailing numbers like _001
-    slug = re.sub(r"_\d+$", "", stem)
-
-    # Check direct match
-    if slug in FILENAME_TO_SPECIES:
-        return FILENAME_TO_SPECIES[slug]
-
-    # Check partial match
-    for key, species in FILENAME_TO_SPECIES.items():
-        if key in slug:
-            return species
-
-    return None
+MOCK_SPECIES = [
+    ("Albacore Tuna", "legal", 35),
+    ("Yellowfin Tuna", "legal", 20),
+    ("Shark", "bycatch", 15),
+    ("Pelagic Stingray", "protected", 5),
+    ("Unknown", "unknown", 2),
+]
 
 
 def _mock_inference(image: Image.Image, filename: str | None) -> InferenceResult:
     """Return mock result based on filename or random."""
-    global _forced_species
-
     width, height = image.size
 
-    # Priority 1: Forced species (for testing)
-    if _forced_species:
-        species = _forced_species
-        _forced_species = None
-        return InferenceResult(
-            species=species,
-            confidence=round(random.uniform(0.80, 0.95), 2),
-            bbox=_random_bbox(width, height),
-        )
+    # Check filename for species hint
+    if filename:
+        fname = filename.lower()
+        if "stingray" in fname or "protected" in fname:
+            species, status = "Pelagic Stingray", "protected"
+        elif "shark" in fname:
+            species, status = "Shark", "bycatch"
+        elif "albacore" in fname:
+            species, status = "Albacore Tuna", "legal"
+        else:
+            # Weighted random
+            choices = [(s, st) for s, st, _ in MOCK_SPECIES]
+            weights = [w for _, _, w in MOCK_SPECIES]
+            species, status = random.choices(choices, weights=weights, k=1)[0]
+    else:
+        choices = [(s, st) for s, st, _ in MOCK_SPECIES]
+        weights = [w for _, _, w in MOCK_SPECIES]
+        species, status = random.choices(choices, weights=weights, k=1)[0]
 
-    # Priority 2: Parse from filename
-    parsed = _parse_species_from_filename(filename)
-    if parsed:
-        return InferenceResult(
-            species=parsed,
-            confidence=round(random.uniform(0.80, 0.95), 2),
-            bbox=_random_bbox(width, height),
-        )
+    # Random bbox
+    bw = random.randint(int(width * 0.2), int(width * 0.4))
+    bh = random.randint(int(height * 0.2), int(height * 0.4))
+    x1 = random.randint(0, width - bw)
+    y1 = random.randint(0, height - bh)
 
-    # Priority 3: Weighted random
-    species, _ = _weighted_random_species()
     return InferenceResult(
         species=species,
         confidence=round(random.uniform(0.75, 0.95), 2),
-        bbox=_random_bbox(width, height),
+        bbox=[x1, y1, x1 + bw, y1 + bh],
     )
 
 
@@ -322,7 +268,7 @@ def run_inference(image: Image.Image, filename: str | None = None) -> InferenceR
     """
     Run inference on an image, return primary detection.
 
-    If MOCK_INFERENCE=true or model not loaded, returns mock results.
+    If MOCK_INFERENCE=true, returns mock results.
     Otherwise runs real PaliGemma inference.
     """
     if not is_model_loaded():
@@ -335,15 +281,10 @@ def run_inference(image: Image.Image, filename: str | None = None) -> InferenceR
     # Real inference
     img_width, img_height = image.size
     raw_output = _run_raw_inference(image)
-
-    # Parse detections from model output
     detections = parse_detections(raw_output, img_width, img_height)
-
-    # Select most critical detection
     primary = select_primary_detection(detections)
 
     if primary is None:
-        # No fish detected - return Unknown
         return InferenceResult(
             species="Unknown",
             confidence=0.5,
@@ -355,3 +296,104 @@ def run_inference(image: Image.Image, filename: str | None = None) -> InferenceR
         confidence=primary["confidence"],
         bbox=primary["bbox"],
     )
+```
+
+---
+
+## Step 3: Update database.py Species (~5 min)
+
+Add missing species to `SPECIES_DATA`:
+
+```python
+SPECIES_DATA = [
+    # Legal (status=0)
+    (1, "Albacore Tuna", 0),
+    (2, "Yellowfin Tuna", 0),
+    (3, "Bigeye Tuna", 0),
+    (4, "Skipjack Tuna", 0),
+    (5, "Mahi-Mahi", 0),
+    (6, "Swordfish", 0),
+    (7, "Wahoo", 0),
+    (8, "Shortbill Spearfish", 0),
+    (9, "Long Snouted Lancetfish", 0),
+    (10, "Great Barracuda", 0),
+    (11, "Sickle Pomfret", 0),
+    (12, "Pomfret", 0),
+    (13, "Rainbow Runner", 0),
+    (14, "Snake Mackerel", 0),
+    (15, "Roudie Scolar", 0),
+    # Bycatch (status=1)
+    (16, "Shark", 1),
+    (17, "Thresher Shark", 1),
+    (18, "Opah", 1),
+    (19, "Oilfish", 1),
+    (20, "Mola Mola", 1),
+    # Protected (status=2)
+    (21, "Pelagic Stingray", 2),
+    (22, "Striped Marlin", 2),
+    (23, "Blue Marlin", 2),
+    (24, "Black Marlin", 2),
+    (25, "Indo Pacific Sailfish", 2),
+    # Unknown (status=3)
+    (26, "Unknown", 3),
+]
+```
+
+---
+
+## Step 4: Test (~5 min)
+
+### Mock Mode Test
+```bash
+cd backend
+MOCK_INFERENCE=true uv run uvicorn main:app --port 8000
+# Upload test image via frontend
+```
+
+### Real Model Test
+```bash
+cd backend
+uv run uvicorn main:app --port 8000
+# Wait for "Model loaded!" message (~15-20s)
+# Upload test image
+```
+
+---
+
+## Step 5: Verify Alert Flow
+
+1. Upload image with filename containing "stingray"
+2. Verify CRITICAL alert appears (red)
+3. Verify audio plays
+4. Click Release button
+5. Verify compliance updates
+
+---
+
+## Quick Reference: Species Codes
+
+```
+LEGAL:     ALB YFT BET SKJ DOL SWO WAH SSF LAF BAR SPF POM RRN SNM RSC
+BYCATCH:   SHK THR OPA OIL MOL
+PROTECTED: PLS STM BUM BKM SAI
+OTHER:     UNK NOF
+```
+
+---
+
+## Troubleshooting
+
+### "Model not loaded"
+- Check `models/catchlog-lora-adapter/` exists
+- Check adapter files are present
+
+### OOM on Mac
+```python
+# In inference.py, change:
+DEVICE = "cpu"
+torch_dtype=torch.float32
+```
+
+### Species Not Found
+- Check model output codes match SPECIES_MAP
+- Unknown codes default to "Unknown" status

@@ -1,3 +1,7 @@
 demo_images/*.jpg
 .env
 catch_log.db
+# Model weights (download separately)
+models/
+*.safetensors
+*.zip

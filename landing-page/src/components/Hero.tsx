@@ -1,4 +1,4 @@
-import { Anchor, Shield, Wifi, WifiOff } from 'lucide-react';
+import { Anchor, Shield, Wifi, WifiOff, Volume2 } from 'lucide-react';
 
 interface HeroProps {
   onViewArchitecture: () => void;
@@ -21,33 +21,37 @@ export default function Hero({ onViewArchitecture }: HeroProps) {
 
           {/* Headline */}
           <h1 className="font-display text-5xl md:text-6xl font-bold text-navy-800 leading-tight mb-6">
-            AI-Powered Fishing
-            <span className="gradient-text block mt-2">Compliance at Sea</span>
+            Your AI Compliance
+            <span className="gradient-text block mt-2">Officer at Sea</span>
           </h1>
 
           {/* Subheadline */}
           <p className="text-xl text-text-muted leading-relaxed mb-10 max-w-2xl mx-auto">
-            On-device species detection that works <strong className="text-navy-800">offline</strong>,
-            with intelligent cloud compliance review when you're back online.
+            On-device species detection, real-time regulation enforcement, and voice alerts —
+            <strong className="text-navy-800"> 200 miles offshore, no signal, no cloud, no human reviewer</strong>.
           </p>
 
           {/* Key Points */}
-          <div className="flex flex-wrap justify-center gap-4 mb-10">
+          <div className="flex flex-wrap justify-center gap-3 mb-10">
             <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-ocean-100">
               <WifiOff className="w-5 h-5 text-ocean-500" />
-              <span className="text-sm font-medium text-navy-800">Works Offline</span>
+              <span className="text-sm font-medium text-navy-800">Fully Offline</span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-ocean-100">
               <Anchor className="w-5 h-5 text-seafoam-500" />
-              <span className="text-sm font-medium text-navy-800">On-Device AI</span>
+              <span className="text-sm font-medium text-navy-800">PaliGemma 2 3B</span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-ocean-100">
-              <Wifi className="w-5 h-5 text-ocean-500" />
-              <span className="text-sm font-medium text-navy-800">Smart Sync</span>
+              <Volume2 className="w-5 h-5 text-coral-500" />
+              <span className="text-sm font-medium text-navy-800">Voice Alerts</span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-ocean-100">
-              <Shield className="w-5 h-5 text-coral-500" />
-              <span className="text-sm font-medium text-navy-800">Compliance Agent</span>
+              <Shield className="w-5 h-5 text-ocean-500" />
+              <span className="text-sm font-medium text-navy-800">Auto Compliance</span>
+            </div>
+            <div className="flex items-center gap-2 px-4 py-2 bg-white rounded-xl shadow-sm border border-ocean-100">
+              <Wifi className="w-5 h-5 text-seafoam-500" />
+              <span className="text-sm font-medium text-navy-800">Cloud Sync</span>
             </div>
           </div>
 

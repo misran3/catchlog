@@ -9,7 +9,7 @@ export default function UnderTheHood() {
             Under the Hood
           </h2>
           <p className="text-text-muted max-w-2xl mx-auto">
-            A two-phase architecture: On-device inference at sea, intelligent cloud compliance when connected.
+            Real-time enforcement at sea with on-device AI, automated compliance review on shore with cloud agents.
           </p>
         </div>
 
@@ -22,7 +22,7 @@ export default function UnderTheHood() {
                 <Smartphone className="w-5 h-5 text-white" />
               </div>
               <h3 className="font-display text-xl font-bold text-navy-800">
-                Phase 1: On-Device (Offline)
+                Phase 1: At Sea (Offline)
               </h3>
             </div>
 
@@ -30,32 +30,32 @@ export default function UnderTheHood() {
               <div className="flex items-start gap-4 p-3 bg-ocean-50 rounded-xl">
                 <Camera className="w-6 h-6 text-ocean-500 mt-0.5" />
                 <div>
-                  <div className="font-medium text-navy-800">Camera Input</div>
-                  <div className="text-sm text-text-muted">Real-time video stream from device camera</div>
+                  <div className="font-medium text-navy-800">Deck Camera</div>
+                  <div className="text-sm text-text-muted">Real-time video stream from vessel camera</div>
                 </div>
               </div>
 
               <div className="flex items-start gap-4 p-3 bg-ocean-50 rounded-xl">
                 <Cpu className="w-6 h-6 text-seafoam-500 mt-0.5" />
                 <div>
-                  <div className="font-medium text-navy-800">Gemma 3n Model</div>
-                  <div className="text-sm text-text-muted">Fine-tuned on FOID dataset (8 species), runs on mobile GPU</div>
+                  <div className="font-medium text-navy-800">PaliGemma 2 3B + QLoRA</div>
+                  <div className="text-sm text-text-muted">45MB adapter detects 12 species with bounding boxes</div>
                 </div>
               </div>
 
               <div className="flex items-start gap-4 p-3 bg-ocean-50 rounded-xl">
                 <Database className="w-6 h-6 text-ocean-500 mt-0.5" />
                 <div>
-                  <div className="font-medium text-navy-800">Local SQLite DB</div>
-                  <div className="text-sm text-text-muted">Stores audit log: species, confidence, timestamp, GPS</div>
+                  <div className="font-medium text-navy-800">Local Audit Log</div>
+                  <div className="text-sm text-text-muted">Species, confidence, timestamp, GPS — tamper-proof</div>
                 </div>
               </div>
 
               <div className="flex items-start gap-4 p-3 bg-coral-400/10 rounded-xl">
                 <Volume2 className="w-6 h-6 text-coral-500 mt-0.5" />
                 <div>
-                  <div className="font-medium text-navy-800">Ship Alarm</div>
-                  <div className="text-sm text-text-muted">Sound alert when protected species detected at sea</div>
+                  <div className="font-medium text-navy-800">Voice Alerts</div>
+                  <div className="text-sm text-text-muted">Instant audio alarm when protected species detected</div>
                 </div>
               </div>
             </div>
@@ -68,7 +68,7 @@ export default function UnderTheHood() {
                 <Cloud className="w-5 h-5 text-white" />
               </div>
               <h3 className="font-display text-xl font-bold text-navy-800">
-                Phase 2: Cloud Sync (Online)
+                Phase 2: At Port (Online)
               </h3>
             </div>
 
@@ -77,23 +77,23 @@ export default function UnderTheHood() {
                 <Server className="w-6 h-6 text-seafoam-500 mt-0.5" />
                 <div>
                   <div className="font-medium text-navy-800">FastAPI Backend</div>
-                  <div className="text-sm text-text-muted">Receives audit log via POST /api/sync</div>
+                  <div className="text-sm text-text-muted">Receives full trip audit log on sync</div>
                 </div>
               </div>
 
               <div className="flex items-start gap-4 p-3 bg-seafoam-50 rounded-xl">
                 <Bot className="w-6 h-6 text-ocean-500 mt-0.5" />
                 <div>
-                  <div className="font-medium text-navy-800">Pydantic AI Agent</div>
-                  <div className="text-sm text-text-muted">Claude on Bedrock reviews catches against regulations</div>
+                  <div className="font-medium text-navy-800">Claude on AWS Bedrock</div>
+                  <div className="text-sm text-text-muted">Reviews catches against regulations, calculates fines</div>
                 </div>
               </div>
 
               <div className="flex items-start gap-4 p-3 bg-seafoam-50 rounded-xl">
                 <Mail className="w-6 h-6 text-ocean-500 mt-0.5" />
                 <div>
-                  <div className="font-medium text-navy-800">AWS SES Email</div>
-                  <div className="text-sm text-text-muted">Compliance report emailed after cloud sync completes</div>
+                  <div className="font-medium text-navy-800">AWS SES Alerts</div>
+                  <div className="text-sm text-text-muted">Email notifications for unresolved violations</div>
                 </div>
               </div>
             </div>
@@ -106,17 +106,25 @@ export default function UnderTheHood() {
             Tech Stack
           </h3>
 
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-6">
             <div className="text-center">
               <div className="w-14 h-14 bg-gradient-to-br from-ocean-500 to-ocean-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                <span className="text-2xl">🤖</span>
+                <span className="text-2xl">🔮</span>
               </div>
-              <div className="font-medium text-navy-800">Gemma 3n</div>
-              <div className="text-xs text-text-muted">Fine-tuned Vision</div>
+              <div className="font-medium text-navy-800">PaliGemma 2</div>
+              <div className="text-xs text-text-muted">3B Vision Model</div>
             </div>
 
             <div className="text-center">
               <div className="w-14 h-14 bg-gradient-to-br from-seafoam-500 to-seafoam-600 rounded-2xl flex items-center justify-center mx-auto mb-3">
+                <span className="text-2xl">🎯</span>
+              </div>
+              <div className="font-medium text-navy-800">QLoRA</div>
+              <div className="text-xs text-text-muted">45MB Adapter</div>
+            </div>
+
+            <div className="text-center">
+              <div className="w-14 h-14 bg-gradient-to-br from-ocean-400 to-ocean-500 rounded-2xl flex items-center justify-center mx-auto mb-3">
                 <span className="text-2xl">⚡</span>
               </div>
               <div className="font-medium text-navy-800">FastAPI</div>
@@ -148,33 +156,29 @@ export default function UnderTheHood() {
             Data Flow
           </h4>
           <div className="font-mono text-sm text-ocean-200 space-y-2">
-            <div className="flex items-center gap-3">
-              <span className="text-ocean-400">1.</span>
-              <span>Camera → Gemma 3n → Species Detection (on-device)</span>
+            <div className="flex items-start gap-3">
+              <span className="text-ocean-400 flex-shrink-0">1.</span>
+              <span>Deck camera → PaliGemma 2 → Species + bbox detection (on-device)</span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-ocean-400">2.</span>
-              <span>Detection → SQLite Audit Log (species, confidence, GPS, timestamp)</span>
+            <div className="flex items-start gap-3">
+              <span className="text-ocean-400 flex-shrink-0">2.</span>
+              <span>Detection → Local audit log (species, confidence, GPS, timestamp)</span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-coral-400">3.</span>
-              <span className="text-coral-300">If violation at sea → Ship alarm sounds immediately</span>
+            <div className="flex items-start gap-3">
+              <span className="text-coral-400 flex-shrink-0">3.</span>
+              <span className="text-coral-300">Protected species? → Voice alert sounds immediately</span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-ocean-400">4.</span>
-              <span>Back online → User clicks "Sync" → POST /api/sync</span>
+            <div className="flex items-start gap-3">
+              <span className="text-ocean-400 flex-shrink-0">4.</span>
+              <span>Vessel returns to port → Sync full trip audit log</span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-ocean-400">5.</span>
-              <span>Backend → Pydantic AI Agent → Reviews against regulations</span>
+            <div className="flex items-start gap-3">
+              <span className="text-ocean-400 flex-shrink-0">5.</span>
+              <span>Cloud agent → Reviews against regulations → Calculates fines</span>
             </div>
-            <div className="flex items-center gap-3">
-              <span className="text-ocean-400">6.</span>
-              <span>Agent → ComplianceReport → Email sent via AWS SES</span>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="text-ocean-400">7.</span>
-              <span>Response → UI shows compliance status + detailed report</span>
+            <div className="flex items-start gap-3">
+              <span className="text-ocean-400 flex-shrink-0">6.</span>
+              <span>Unresolved violations → Email alert via AWS SES</span>
             </div>
           </div>
         </div>

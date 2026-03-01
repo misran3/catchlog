@@ -4,38 +4,38 @@ const steps = [
   {
     icon: Camera,
     title: 'Capture',
-    description: 'Point camera at catch. Real-time species detection.',
+    description: 'Deck camera monitors catch in real-time.',
     color: 'ocean',
   },
   {
     icon: Cpu,
     title: 'Identify',
-    description: 'Fine-tuned Gemma model runs on-device. No internet needed.',
+    description: 'PaliGemma 2 detects species with bounding boxes. No internet.',
     color: 'seafoam',
   },
   {
     icon: Database,
     title: 'Log',
-    description: 'Species, timestamp, GPS logged to local audit trail.',
+    description: 'Species, confidence, GPS, timestamp — tamper-proof audit.',
     color: 'ocean',
   },
   {
     icon: Volume2,
-    title: 'Sound Alert',
-    description: 'Violation detected at sea? Ship alarm sounds immediately.',
+    title: 'Voice Alert',
+    description: 'Protected species? Instant audio alarm at sea.',
     color: 'coral',
     hasDemo: true,
   },
   {
     icon: Cloud,
     title: 'Sync',
-    description: 'Back to port with connectivity? AI agent reviews full log.',
+    description: 'Back at port? Cloud agent reviews full trip log.',
     color: 'seafoam',
   },
   {
     icon: Mail,
-    title: 'Email Report',
-    description: 'Compliance report emailed once cloud sync completes.',
+    title: 'Report',
+    description: 'Violations? Fines calculated, email sent automatically.',
     color: 'ocean',
   },
 ];
@@ -54,7 +54,7 @@ export default function HowItWorks() {
             How It Works
           </h2>
           <p className="text-text-muted max-w-xl mx-auto">
-            From catch to compliance in seconds, whether you're 50 miles offshore or dockside.
+            Real-time enforcement at sea, automated compliance review at port.
           </p>
         </div>
 

@@ -1,0 +1,188 @@
+@import "tailwindcss";
+
+@theme {
+  --color-ocean-50: #f0f9ff;
+  --color-ocean-100: #e0f2fe;
+  --color-ocean-200: #b9e5fe;
+  --color-ocean-300: #7cd4fd;
+  --color-ocean-400: #36bffa;
+  --color-ocean-500: #0ba5ec;
+  --color-ocean-600: #0086c9;
+  --color-ocean-700: #026aa2;
+  --color-ocean-800: #065986;
+  --color-ocean-900: #0b4a6f;
+
+  --color-seafoam-50: #ecfdf5;
+  --color-seafoam-100: #d1fae5;
+  --color-seafoam-200: #a7f3d0;
+  --color-seafoam-300: #6ee7b7;
+  --color-seafoam-400: #34d399;
+  --color-seafoam-500: #10b981;
+
+  --color-sand-50: #fefce8;
+  --color-sand-100: #fef9c3;
+  --color-sand-200: #fef08a;
+  --color-sand-300: #fde047;
+  --color-sand-400: #facc15;
+
+  --color-coral-400: #fb7185;
+  --color-coral-500: #f43f5e;
+
+  --color-navy-800: #1e3a5f;
+  --color-navy-900: #0f172a;
+
+  --color-background: #f8fafc;
+  --color-surface: #ffffff;
+  --color-text: #1e3a5f;
+  --color-text-muted: #64748b;
+
+  --font-display: 'Bricolage Grotesque', system-ui, sans-serif;
+  --font-body: 'DM Sans', system-ui, sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: var(--font-body);
+    background: var(--color-background);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-display);
+    font-weight: 700;
+  }
+}
+
+@layer components {
+  .section-container {
+    @apply max-w-5xl mx-auto px-6;
+  }
+
+  .gradient-text {
+    background: linear-gradient(135deg, var(--color-ocean-500) 0%, var(--color-seafoam-500) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .card {
+    @apply bg-surface rounded-2xl p-6 border border-ocean-100 shadow-sm;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card:hover {
+    @apply shadow-lg border-ocean-200 -translate-y-1;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl font-semibold transition-all duration-300;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--color-ocean-500) 0%, var(--color-ocean-600) 100%);
+    @apply text-white shadow-lg shadow-ocean-500/25;
+  }
+
+  .btn-primary:hover {
+    @apply -translate-y-0.5 shadow-xl shadow-ocean-500/30;
+  }
+
+  .btn-secondary {
+    @apply bg-white text-ocean-700 border-2 border-ocean-200;
+  }
+
+  .btn-secondary:hover {
+    @apply bg-ocean-50 border-ocean-300;
+  }
+
+  .nav-link {
+    @apply px-4 py-2 rounded-lg font-medium text-text-muted transition-all duration-200;
+  }
+
+  .nav-link:hover {
+    @apply bg-ocean-50 text-ocean-700;
+  }
+
+  .nav-link.active {
+    @apply bg-ocean-100 text-ocean-700;
+  }
+}
+
+/* Ocean wave animation */
+@keyframes wave {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  25% { transform: translateY(-5px) rotate(1deg); }
+  50% { transform: translateY(0) rotate(0deg); }
+  75% { transform: translateY(5px) rotate(-1deg); }
+}
+
+.animate-wave {
+  animation: wave 6s ease-in-out infinite;
+}
+
+.animate-wave-slow {
+  animation: wave 8s ease-in-out infinite;
+}
+
+.animate-wave-delayed {
+  animation: wave 7s ease-in-out infinite;
+  animation-delay: -2s;
+}
+
+/* Floating animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+.animate-float {
+  animation: float 4s ease-in-out infinite;
+}
+
+/* Pulse ring animation */
+@keyframes pulse-ring {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.5); opacity: 0; }
+}
+
+.animate-pulse-ring {
+  animation: pulse-ring 2s ease-out infinite;
+}
+
+/* Gradient mesh background */
+.ocean-gradient {
+  background:
+    radial-gradient(ellipse at 20% 20%, rgba(11, 165, 236, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, rgba(16, 185, 129, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 60% 40%, rgba(54, 191, 250, 0.08) 0%, transparent 40%),
+    linear-gradient(180deg, #f8fafc 0%, #f0f9ff 100%);
+}
+
+/* Code block styling */
+.prose pre {
+  @apply bg-navy-900 text-ocean-100 rounded-xl p-4 overflow-x-auto text-sm;
+}
+
+.prose code {
+  @apply bg-ocean-100 text-ocean-800 px-1.5 py-0.5 rounded text-sm font-mono;
+}
+
+.prose pre code {
+  @apply bg-transparent text-inherit p-0;
+}
+
+/* Fade in animation */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.4s ease-out;
+}

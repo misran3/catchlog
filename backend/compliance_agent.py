@@ -4,6 +4,7 @@
 import os
 from pydantic_ai import Agent
 from pydantic_ai.models.bedrock import BedrockConverseModel
+from pydantic_ai.providers.bedrock import BedrockProvider
 
 from models import ComplianceReport, TripSummary, Violation
 from email_service import send_email
@@ -79,8 +80,11 @@ _email_was_sent = False
 
 def _create_agent() -> Agent[None, ComplianceReport]:
     """Create the compliance agent with Bedrock model."""
+    region = os.getenv("AWS_REGION", "us-east-1")
+    provider = BedrockProvider(region_name=region)
     model = BedrockConverseModel(
         model_name="us.anthropic.claude-sonnet-4-20250514-v1:0",
+        provider=provider,
     )
 
     return Agent(

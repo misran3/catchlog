@@ -166,7 +166,7 @@ AUDIT LOG:
     result = await agent.run(user_prompt)
 
     # Update email_sent field based on actual tool call
-    report = result.data
+    report = result.output
     report.email_sent = _email_was_sent
 
     return report

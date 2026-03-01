@@ -80,13 +80,12 @@ _email_was_sent = False
 def _create_agent() -> Agent[None, ComplianceReport]:
     """Create the compliance agent with Bedrock model."""
     model = BedrockConverseModel(
-        model="us.anthropic.claude-sonnet-4-20250514-v1:0",
-        region_name=os.getenv("AWS_REGION", "us-east-1"),
+        model_name="us.anthropic.claude-sonnet-4-20250514-v1:0",
     )
 
     return Agent(
         model=model,
-        result_type=ComplianceReport,
+        output_type=ComplianceReport,
         system_prompt=SYSTEM_PROMPT,
     )
 

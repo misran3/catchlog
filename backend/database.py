@@ -166,3 +166,63 @@ def reset_db() -> None:
     with get_connection() as conn:
         conn.execute("DELETE FROM detections")
         conn.commit()
+
+
+def get_audit_log() -> list[dict]:
+    """Get all detections as audit log for compliance review."""
+    with get_connection() as conn:
+        cursor = conn.execute("""
+            SELECT
+                d.id,
+                d.ts,
+                s.name as species,
+                s.status,
+                d.released
+            FROM detections d
+            JOIN species s ON d.species_id = s.id
+            ORDER BY d.ts ASC
+        """)
+
+        rows = cursor.fetchall()
+        return [
+            {
+                "id": row["id"],
+                "timestamp": row["ts"],
+                "species": row["species"],
+                "status": ["legal", "bycatch", "protected", "unknown"][row["status"]],
+                "released": bool(row["released"]),
+            }
+            for row in rows
+        ]
+
+
+def format_audit_log_for_agent(detections: list[dict]) -> str:
+    """Format audit log as a string for the compliance agent."""
+    if not detections:
+        return "No catches recorded."
+
+    lines = ["CATCH LOG:", "=" * 40]
+
+    for d in detections:
+        released_str = " (RELEASED)" if d["released"] else ""
+        lines.append(
+            f"- {d['species']} | Status: {d['status']} | ID: {d['id']}{released_str}"
+        )
+
+    # Add summary
+    total = len(detections)
+    by_status = {}
+    released = sum(1 for d in detections if d["released"])
+
+    for d in detections:
+        by_status[d["status"]] = by_status.get(d["status"], 0) + 1
+
+    lines.append("=" * 40)
+    lines.append(f"TOTAL: {total} catches")
+    lines.append(f"  Legal: {by_status.get('legal', 0)}")
+    lines.append(f"  Bycatch: {by_status.get('bycatch', 0)}")
+    lines.append(f"  Protected: {by_status.get('protected', 0)}")
+    lines.append(f"  Unknown: {by_status.get('unknown', 0)}")
+    lines.append(f"  Released: {released}")
+
+    return "\n".join(lines)
